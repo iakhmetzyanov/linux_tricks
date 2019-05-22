@@ -1,0 +1,19 @@
+stages:
+  - test
+before_script:
+    - rm something/*
+run-compose:
+  stage: test
+  script:
+    - docker-compose up --abort-on-container-exit --exit-code-from my_container
+  artifacts:
+    when: always
+    paths:
+    - something
+    expire_in: 1 week
+  after_script:
+    - docker-compose down
+    - docker rmi -f my_container
+    - rm something/*
+  allow_failure: true
+  when: manual

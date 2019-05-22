@@ -1,0 +1,8 @@
+#!/bin/bash
+NET1=
+NET2=
+GATEWAY1=
+GATEWAY2=
+ip route add $NET1 via $GATEWAY1
+ip route add $NET2 via $GATEWAY2
+

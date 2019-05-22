@@ -1,0 +1,11 @@
+version: '2.1' 
+services:
+  my_container:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        PROJECT_OWNER: ${CI_PROJECT_NAMESPACE}
+    command: >
+      sh -c "set +e; do something please; EXITCODE=$$?; set -e; echo EXIT_CODE_IS-$$EXITCODE; echo DATE_IS-$$(date); exit $$EXITCODE"
+#Use this to handle exitcodes in giltab pipelines and sending that to the gitlab job status.

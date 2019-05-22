@@ -1,0 +1,15 @@
+[Unit]
+Description=Naumen Route Service
+Requires=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+User=root
+ExecStart=/usr/local/bin/route
+
+[Install]
+WantedBy=multi-user.target
+

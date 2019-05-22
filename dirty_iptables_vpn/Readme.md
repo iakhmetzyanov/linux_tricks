@@ -1,0 +1,1 @@
+If you have difficult to tune up from a console at the server (or the server with an old OS) l2tp_wpa_psk strongswan VPN. But it works at local fresh Ubuntu 18.04 and younger OS machine. And you want to just hotwire VPN to that server. Try this.
