@@ -1,0 +1,64 @@
+param (
+    $localPath = "C:\Program Files (x86)\Jenkins\workspace\to_test" ,
+    $RemotePath = "/home/user/from_jenkins"
+# ,
+    #$backupPath = "C:\backup"
+)
+try
+{
+# Загрузить сборку .NET WinSCP 
+Add-Type -Path "C:\Program Files (x86)\WinSCP\WinSCPnet.dll"
+
+# Задать параметры сессии
+$sessionOptions = New-Object WinSCP.SessionOptions -Property @{
+    Protocol = [WinSCP.Protocol]::Scp
+    HostName = "REMOTE_SERVERs_IP_HERE"
+    UserName = "USER_NAME_HERE"
+    Password = "PASSWORD_HERE"
+    SshHostKeyFingerprint = "SSH_FINGERPRINT FROM WINSCP HERE"
+}
+
+$session = New-Object WinSCP.Session
+
+try
+{
+        #$directoryInfo = ListDirectory($localPath)
+
+	# THE MOST IMPORTANT PART! 
+	# Select the most recent file
+
+        $latest =
+            Get-ChildItem -Path $localPath |
+            Where-Object {!$_.PsIsContainer} |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
+        # Any file at all?
+        if ($latest -eq $Null)
+        {
+            Write-Host "No file found"
+            exit 1
+        }
+
+ # Connect
+    $session.Open($sessionOptions)
+
+          # Upload the selected file
+        $sourcePath = Join-Path $localPath $latest.Name
+        $session.PutFiles(
+            [WinSCP.RemotePath]::EscapeFileMask($sourcePath),
+            [WinSCP.RemotePath]::CombinePaths($remotePath, "*")).Check()
+    }
+
+
+
+finally
+{
+    $session.Dispose()
+}
+    exit 0
+}
+catch
+{
+    Write-Host "Error: $($_.Exception.Message)"
+    exit 1
+}
