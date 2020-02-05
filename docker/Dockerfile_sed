@@ -1,0 +1,21 @@
+FROM store/oracle/serverjre:8
+#You can not remove or unset env variable after using complete container 
+#in FROM 
+#So you have to either set another value of that variable
+#or use another variable everywhere below
+
+ARG RESTORE_PASS_URL=http://website.com
+RUN echo "$RESTORE_PASS_URL" >> /333.txt
+
+ENV RESTORE_PASS_URL_SET="$RESTORE_PASS_URL"
+RUN env >> /123.txt
+
+RUN echo "$RESTORE_PASS_URL $RESTORE_PASS_URL_SET" >> /123.txt
+RUN echo "123" >> /1.txt
+RUN export RESTORE_PASS_URL_SET="$RESTORE_PASS_URL"
+RUN echo -e "#!/bin/bash -x\nsed -i 's@1.*@555"$(cat /333.txt)";@g' /1.txt \n" >> /1.sh
+RUN cat /1.sh
+RUN chmod 755 /1.sh
+RUN /1.sh
+RUN cat /123.txt
+RUN cat /1.txt
